@@ -5,15 +5,13 @@ import com.example.td2.entities.User
 import com.example.td2.repositories.OrganizationRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
-import org.springframework.stereotype.Repository
 import org.springframework.ui.ModelMap
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ModelAttribute
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.servlet.view.RedirectView
-import java.lang.ProcessBuilder.Redirect
-import javax.management.modelmbean.ModelMBean
 
 @Controller
 @RequestMapping("/orgas/")
@@ -21,6 +19,9 @@ class OrgaController {
 
     @Autowired
     lateinit var orgaRepository: OrganizationRepository
+
+    @Autowired
+    lateinit var orgaService:OrgaService
 
 
     @RequestMapping(path =["","index"])
@@ -39,19 +40,26 @@ class OrgaController {
     @PostMapping("/new")
     fun submitnewAction(
             @ModelAttribute orga:Organization,
-            @ModelAttribute users:String
+            @ModelAttribute("users") users:String
     ):RedirectView{
-        val usersArray=users.split("\n").forEach{
-            val user = User()
-            val values=it.split(" ")
-            user.firstname=values.getOrNull(0)
-            user.lastname=values.getOrNull(1)
-            user.email="${user.lastname}.${user.lastname}.@${orga.domain}"
-            orga.addUser(user)
-        }
-
+        orgaService.addUsersFromString(users, orga)
         orgaRepository.save(orga)
-        return RedirectView("/orgas/")
+        return  RedirectView("/orgas/")
     }
 
+    @GetMapping("/delete/{id}")
+    fun deleteAction(@PathVariable id:Int):RedirectView{
+        orgaRepository.deleteById(id)
+        return  RedirectView("/orgas/")
+    }
+
+    @GetMapping("/detail/{id}")
+    fun detailAction(@PathVariable id:Int, model:ModelMap):String{
+        val option = orgaRepository.findById(id)
+        if(option.isPresent){
+            model["orga"]=option.get()
+        }
+        return "/orgas/detail"
+    }
 }
+
