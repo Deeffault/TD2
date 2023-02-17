@@ -2,16 +2,21 @@ package com.example.td2.controllers
 
 import com.example.td2.entities.Organization
 import com.example.td2.entities.User
+import com.example.td2.exceptions.ElementNotFoundException
 import com.example.td2.repositories.OrganizationRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.ui.ModelMap
+import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.ResponseBody
+import org.springframework.web.servlet.ModelAndView
 import org.springframework.web.servlet.view.RedirectView
+import java.lang.Exception
 
 @Controller
 @RequestMapping("/orgas/")
@@ -27,6 +32,7 @@ class OrgaController {
     @RequestMapping(path =["","index"])
     fun indexAction(model:ModelMap):String{
         model["orgas"]=orgaRepository.findAll()
+        //1/0
         return "/orgas/index"
     }
 
@@ -58,8 +64,18 @@ class OrgaController {
         val option = orgaRepository.findById(id)
         if(option.isPresent){
             model["orga"]=option.get()
+            return "/orgas/detail"
         }
-        return "/orgas/detail"
+        throw ElementNotFoundException("Organisation d'id $id non trouvée !")
     }
+
+    @ExceptionHandler(value = [ElementNotFoundException::class])
+    fun errorHandlerAction(ex:Exception):ModelAndView{
+        val mv=ModelAndView("/main/error")
+        mv.addObject("content", ex.message)
+        mv.addObject("title","Élément non trouvé")
+        return mv
+    }
+
 }
 
