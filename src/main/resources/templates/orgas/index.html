@@ -1,0 +1,18 @@
+{{> main/header}}
+<h1>Messagerie</h1>
+<h2>Organisation</h2>
+<a href="/orgas/new" class="ui red button">
+    <i class="plus icon"></i>
+    Ajouter une organisation
+</a>
+<ul>
+{{#orgas}}
+    <li>{{name}}</li>
+    <ul>
+        {{#users}}
+        <li> {{lastname}} - {{email}}</li>
+        {{/users}}
+    </ul>
+{{/orgas}}
+</ul>
+{{> main/footer}}

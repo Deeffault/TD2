@@ -1,0 +1,24 @@
+{{> main/header}}
+<h1 xmlns="http://www.w3.org/1999/html">Messagerie</h1>
+<h2>Organisation </h2>
+{{#orga}}
+    <form method="post" action="/orgas/new" class="ui form">
+        <div class="two fields">
+            <div class="field">
+                <input type="text" name="name" placeholder="Nom">
+            </div>
+            <div class="field">
+                <input type="text" name="domaine" placeholder="Domaine">
+            </div>
+        </div>
+
+        <div class="field">
+            <input type="email" name="email" placeholder="Email">
+        </div>
+        <hr>
+        <textarea name="users" placeholder="Utilisateurs"></textarea>
+        <br>
+        <button type="submit" class="ui positive button">Valider</button>
+    </form>
+{{/orga}}
+{{> main/footer}}
