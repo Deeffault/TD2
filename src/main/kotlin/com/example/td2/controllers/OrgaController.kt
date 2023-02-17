@@ -32,7 +32,7 @@ class OrgaController {
     @RequestMapping(path =["","index"])
     fun indexAction(model:ModelMap):String{
         model["orgas"]=orgaRepository.findAll()
-        //1/0
+        //+1/0
         return "/orgas/index"
     }
 
@@ -67,14 +67,6 @@ class OrgaController {
             return "/orgas/detail"
         }
         throw ElementNotFoundException("Organisation d'id $id non trouvée !")
-    }
-
-    @ExceptionHandler(value = [ElementNotFoundException::class])
-    fun errorHandlerAction(ex:Exception):ModelAndView{
-        val mv=ModelAndView("/main/error")
-        mv.addObject("content", ex.message)
-        mv.addObject("title","Élément non trouvé")
-        return mv
     }
 
 }
